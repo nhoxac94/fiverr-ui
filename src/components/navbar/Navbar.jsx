@@ -8,12 +8,14 @@ const Navbar = () => {
   const { pathname } = useLocation();
 
   const isActive = () => {
+    console.log(123);
     window.scrollY > 0 ? setActive(true) : setActive(false);
+    console.log(active);
   };
 
   useEffect(() => {
     window.addEventListener('scroll', isActive);
-    return window.removeEventListener('scroll', isActive);
+    return () => window.removeEventListener('scroll', isActive);
   }, []);
 
   const currentUser = {
