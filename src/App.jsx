@@ -11,6 +11,8 @@ import Orders from './pages/orders/Orders';
 import Add from './pages/add/Add';
 import Messages from './pages/messages/Messages';
 import Message from './pages/message/Message';
+import Login from './pages/login/Login';
+import Register from './pages/register/Register';
 
 export default function App() {
   const Layout = () => {
@@ -60,6 +62,14 @@ export default function App() {
         {
           path: '/message/:id',
           element: <Message />,
+        },
+        {
+          path: '/login',
+          element: <Login />,
+        },
+        {
+          path: '/register',
+          element: <Register />,
         },
       ],
     },

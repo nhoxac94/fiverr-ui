@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './Navbar.scss';
+import newRequest from '../../utils/newRequest';
 const Navbar = () => {
   const [active, setActive] = useState(false);
   const [open, setOpen] = useState(false);
 
   const { pathname } = useLocation();
+  const navigate = useNavigate();
 
   const isActive = () => {
-    console.log(123);
     window.scrollY > 0 ? setActive(true) : setActive(false);
-    console.log(active);
   };
 
   useEffect(() => {
@@ -18,10 +18,16 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', isActive);
   }, []);
 
-  const currentUser = {
-    id: 1,
-    userName: 'DragonFly',
-    isSeller: true,
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+  const handleLogout = async () => {
+    try {
+      await newRequest.post('/auth/logout');
+      localStorage.setItem('currentUser', null);
+      navigate('/');
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -39,14 +45,11 @@ const Navbar = () => {
           <span>English</span>
           <span>Sign in</span>
           {!currentUser?.isSeller && <span>Become a seller</span>}
-          {!currentUser?.isSeller && <button>Join</button>}
-          {currentUser?.isSeller && (
+
+          {currentUser ? (
             <div className='user' onClick={() => setOpen(!open)}>
-              <img
-                src='https://images.pexels.com/photos/1115697/pexels-photo-1115697.jpeg?auto=compress&cs=tinysrgb&w=1600'
-                alt=''
-              />
-              <span>{currentUser?.name}</span>
+              <img src={currentUser.img || '/img/noavatar.jpg'} alt='' />
+              <span>{currentUser?.username}</span>
               {open && (
                 <div className='options'>
                   {currentUser?.isSeller && (
@@ -65,12 +68,21 @@ const Navbar = () => {
                   <Link className='link' to='/messages'>
                     Messages
                   </Link>
-                  <Link className='link' to='/logout'>
+                  <Link className='link' onClick={handleLogout}>
                     Logout
                   </Link>
                 </div>
               )}
             </div>
+          ) : (
+            <>
+              <Link to='/login' className='link'>
+                Sign in
+              </Link>
+              <Link className='link' to='/register'>
+                <button>Join</button>
+              </Link>
+            </>
           )}
         </div>
       </div>
